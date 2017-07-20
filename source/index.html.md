@@ -1,239 +1,233 @@
 ---
-title: API Reference
+title: Vapor Template API Reference
 
-language_tabs: # must be one of https://git.io/vQNgJ
+language_tabs:
   - shell
-  - ruby
-  - python
-  - javascript
 
 toc_footers:
-  - <a href='#'>Sign Up for a Developer Key</a>
-  - <a href='https://github.com/tripit/slate'>Documentation Powered by Slate</a>
-
-includes:
-  - errors
+  - <a href='https://github.com/mcdappdev/Vapor-Template'>Template</a>
+  - <a href='https://github.com/mcdappdev/Vaporize'>Vaporize</a>
 
 search: true
 ---
 
 # Introduction
 
-Welcome to the Kittn API! You can use our API to access Kittn API endpoints, which can get information on various cats, kittens, and breeds in our database.
+Welcome to the docs for mcdappdev's Vapor Template! 
 
-We have language bindings in Shell, Ruby, and Python! You can view code examples in the dark area to the right, and you can switch the programming language of the examples with the tabs in the top right.
+These docs will cover how to use the endpoints that are included with the template. 
 
-This example API documentation page was created with [Slate](https://github.com/tripit/slate). Feel free to edit it and use it as a base for your own API's documentation.
+**Note:** All endpoints are hosted at /api/v1/. Make sure to replace the url in the shell examples with localhost or your API URL.
 
 # Authentication
-
-> To authorize, use this code:
-
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-```
 
 ```shell
 # With shell, you can just pass the correct header with each request
 curl "api_endpoint_here"
-  -H "Authorization: meowmeowmeow"
+  -H "Authorization: Bearer API_TOKEN"
 ```
 
-```javascript
-const kittn = require('kittn');
+> Make sure to replace `API_TOKEN` with your API key.
 
-let api = kittn.authorize('meowmeowmeow');
-```
+To authorize, you must register or login. But once you're authenticated, make sure that you pass a `API_TOKEN` to the `Authorization` header, as well as the `Bearer` keyword.:
 
-> Make sure to replace `meowmeowmeow` with your API key.
+# User Functions
 
-Kittn uses API keys to allow access to the API. You can register a new Kittn API key at our [developer portal](http://example.com/developers).
-
-Kittn expects for the API key to be included in all API requests to the server in a header that looks like the following:
-
-`Authorization: meowmeowmeow`
-
-<aside class="notice">
-You must replace <code>meowmeowmeow</code> with your personal API key.
-</aside>
-
-# Kittens
-
-## Get All Kittens
-
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.get
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-api.kittens.get()
-```
+## Login
 
 ```shell
-curl "http://example.com/api/kittens"
-  -H "Authorization: meowmeowmeow"
-```
-
-```javascript
-const kittn = require('kittn');
-
-let api = kittn.authorize('meowmeowmeow');
-let kittens = api.kittens.get();
+  curl -i \
+    -H "Accept: application/json" \
+    -X POST -d "email":"email@email.com","password":"password" \
+    /login
 ```
 
 > The above command returns JSON structured like this:
 
 ```json
-[
-  {
-    "id": 1,
-    "name": "Fluffums",
-    "breed": "calico",
-    "fluffiness": 6,
-    "cuteness": 7
-  },
-  {
-    "id": 2,
-    "name": "Max",
-    "breed": "unknown",
-    "fluffiness": 5,
-    "cuteness": 10
-  }
-]
+{
+  "admin": false,
+  "email": "email@email.com",
+  "id": 2,
+  "name": "Person's name",
+  "token": "53i8yqt8ap0pEJJ9E0FnPQ"
+}
 ```
 
-This endpoint retrieves all kittens.
+This endpoint logs in a user
 
 ### HTTP Request
 
-`GET http://example.com/api/kittens`
+`POST /login`
 
-### Query Parameters
+### Status Codes
+Code | Meaning
+---- | -------
+200  | User Returned
+403  | Invalid Credentials
+500  | Internal Error
+
+### Parameters
 
 Parameter | Default | Description
 --------- | ------- | -----------
-include_cats | false | If set to true, the result will also include cats.
-available | true | If set to false, the result will include kittens that have already been adopted.
+email     |         | The user's email
+password  |         | The user's unhashed password
 
-<aside class="success">
-Remember — a happy kitten is an authenticated kitten!
-</aside>
-
-## Get a Specific Kitten
-
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.get(2)
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-api.kittens.get(2)
-```
+## Register
 
 ```shell
-curl "http://example.com/api/kittens/2"
-  -H "Authorization: meowmeowmeow"
-```
-
-```javascript
-const kittn = require('kittn');
-
-let api = kittn.authorize('meowmeowmeow');
-let max = api.kittens.get(2);
+  curl -i \
+    -H "Accept: application/json" \
+    -X POST -d "name":"name","email":"email@email.com","password":"password" \
+    /register
 ```
 
 > The above command returns JSON structured like this:
 
 ```json
 {
+  "admin": false,
+  "email": "email@email.com",
   "id": 2,
-  "name": "Max",
-  "breed": "unknown",
-  "fluffiness": 5,
-  "cuteness": 10
+  "name": "Person's name",
+  "token": "53i8yqt8ap0pEJJ9E0FnPQ"
 }
 ```
 
-This endpoint retrieves a specific kitten.
-
-<aside class="warning">Inside HTML code blocks like this one, you can't use Markdown, so use <code>&lt;code&gt;</code> blocks to denote code.</aside>
+This endpoint registers a user
 
 ### HTTP Request
 
-`GET http://example.com/kittens/<ID>`
+`POST /register`
 
-### URL Parameters
+### Status Codes
+Code | Meaning
+---- | -------
+200  | User Returned and Saved
+400  | Invalid Data
+500  | Internal Error
 
-Parameter | Description
---------- | -----------
-ID | The ID of the kitten to retrieve
+### Parameters
 
-## Delete a Specific Kitten
+Parameter | Default | Description
+--------- | ------- | -----------
+email     |         | The user's email
+password  |         | The user's unhashed password
+name      |         | The user's name
 
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.delete(2)
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-api.kittens.delete(2)
-```
+## Me
 
 ```shell
-curl "http://example.com/api/kittens/2"
-  -X DELETE
-  -H "Authorization: meowmeowmeow"
+  curl -i \
+    -H "Accept: application/json", "Authorization": "Bearer YOUR_TOKEN_HERE" \
+    /me
 ```
 
-```javascript
-const kittn = require('kittn');
+> Make sure to replace `YOUR_TOKEN_HERE` with the user's token. The above command returns JSON structured like this:
 
-let api = kittn.authorize('meowmeowmeow');
-let max = api.kittens.delete(2);
+```json
+{
+  "admin": false,
+  "email": "email@email.com",
+  "id": 2,
+  "name": "Person's name",
+  "token": "53i8yqt8ap0pEJJ9E0FnPQ"
+}
+```
+
+This endpoint returns the current user
+
+### HTTP Request
+
+`GET /me`
+
+### Status Codes
+Code | Meaning
+---- | -------
+200  | User Returned
+500  | Internal Error
+
+## Update Me
+
+> Any combination of parameters can be passed into this function and all of them will be validated and updated, with the exception of id, token and password. password can be updated using the /password endpoint documented below.
+
+```shell
+  curl -i \
+    -H "Accept: application/json", "Authorization": "Bearer YOUR_TOKEN_HERE" \
+    -X PATCH -d "name":"new name","email":"newemail@email.com" \
+    /me
 ```
 
 > The above command returns JSON structured like this:
 
 ```json
 {
+  "admin": false,
+  "email": "newemail@email.com",
   "id": 2,
-  "deleted" : ":("
+  "name": "new name",
+  "token": "53i8yqt8ap0pEJJ9E0FnPQ"
 }
 ```
 
-This endpoint retrieves a specific kitten.
+This endpoint updates the current user
 
 ### HTTP Request
 
-`DELETE http://example.com/kittens/<ID>`
+`PATCH /me`
 
-### URL Parameters
+### Status Codes
+Code | Meaning
+---- | -------
+200  | User Updated, Returned
+400  | Email Taken
+500  | Internal Error
 
-Parameter | Description
---------- | -----------
-ID | The ID of the kitten to delete
+### Parameters
 
+Parameter | Default | Description
+--------- | ------- | -----------
+email     |         | The user's email
+name      |         | The user's name
+
+## Update Password
+
+```shell
+  curl -i \
+    -H "Accept: application/json", "Authorization": "Bearer YOUR_TOKEN_HERE" \
+    -X PATCH -d "oldPassword":"oldpassword","newPassword":"newPassword" \
+    /me
+```
+
+> The above command returns JSON structured like this:
+
+```json
+{
+  "admin": false,
+  "email": "newemail@email.com",
+  "id": 2,
+  "name": "new name",
+  "token": "53i8yqt8ap0pEJJ9E0FnPQ"
+}
+```
+
+This endpoint updates the current user's password
+
+### HTTP Request
+
+`PATCH /password`
+
+### Status Codes
+Code | Meaning
+---- | -------
+200  | User Updated, Returned
+401  | Incorrect `oldPassword`
+500  | Internal Error
+
+### Parameters
+
+Parameter   | Default | Description
+----------  | ------- | -----------
+oldPassword |         | The user's old, unhashed password
+newPassword |         | The user's new, unhashed password
